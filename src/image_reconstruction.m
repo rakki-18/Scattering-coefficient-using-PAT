@@ -1,63 +1,92 @@
-% define the computational domain   
-Nx = 800;   % number of grid points in the x-direction
-Ny = 300;   % number of grid points in the y-direction
-dx = 1.3393e-04;   % [m]   
-dy = 1.3393e-04;   % [m]   
-kgrid = makeGrid(Nx, dx, Ny, dy);
-dt = 1.1161e-08;   % [s]   
-kgrid.t_array = 0:dt:3.4286e-05; 
-
-% assign the properties of the propagation medium   
-medium.sound_speed = 1500*ones(Nx, Ny);
-medium.BonA        = 2.0*(0-1.0);
-medium.density     = 1000*ones(Nx, Ny);
-medium.alpha_coeff = 0.0; 
-medium.alpha_power = 2.0;
-
-% define source and sensor   
-%load mSOUND_logo.mat   % load the initial source distribution   
-p0 = 1; 
-source.p = p0;
-%source.p_mask = s;
-sensor.mask = zeros(Nx, Ny); 
-sensor.mask(:, 250) = 1; 
-
-% excitation signal   
-sample_freq = 1/dt;  
-signal_freq = 1e6;   
-source_mag = p0;     
 
 
+% create the computational grid
+PML_size = 20;          % size of the PML in grid points
+Nx = 128 - 2*PML_size;  % number of grid points in the x (row) direction
+Ny = 256 - 2*PML_size;  % number of grid points in the y (column) direction
+dx = 0.1e-3;            % grid point spacing in the x direction [m]
+dy = 0.1e-3;            % grid point spacing in the y direction [m]
+kgrid = kWaveGrid(Nx, dx, Ny, dy);
 
-% run the simulation with k-Wave  
+% define the properties of the propagation medium
+medium.sound_speed = 1500;           % [m/s]
+
+% create initial pressure distribution using makeDisc
+disc_magnitude = 5; % [Pa]
+disc_x_pos = 60;    % [grid points]
+disc_y_pos = 140;  	% [grid points]
+disc_radius = 5;    % [grid points]
+disc_2 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
+
+disc_x_pos = 30;    % [grid points]
+disc_y_pos = 110; 	% [grid points]
+disc_radius = 8;    % [grid points]
+disc_1 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
+
+source.p0 = disc_1 + disc_2;
+
+% smooth the initial pressure distribution and restore the magnitude
+source.p0 = smooth(source.p0, true);
+
+% define a binary line sensor
+sensor.mask = zeros(Nx, Ny);
+sensor.mask(1, :) = 1;
+
+% create the time array
+kgrid.makeTime(medium.sound_speed);
+
+% set the input arguements: force the PML to be outside the computational
+% grid; switch off p0 smoothing within kspaceFirstOrder2D
+input_args = {'PMLInside', false, 'PMLSize', PML_size, 'PlotPML', false, 'Smooth', false};
+
+% run the simulation
 sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
-kwave_P_time = reshape(sensor_data.p, Nx, length(kgrid.t_array));
 
-clear medium
-medium.c0 = 1500; % reference speed of sound [m/s]    
+% reconstruct the initial pressure
+p_xy = kspaceLineRecon(sensor_data.', dy, kgrid.dt, medium.sound_speed, ...
+    'Plot', true, 'PosCond', true, 'Interp', '*linear');
 
-% define the computational domain   
-num_x = Nx;    % number of grid points in the x-direction
-num_y = 200;   % number of grid points in the y-direction
-dt = 8*dt;     % time step in TMDM [s] 
-x_length = num_x*dx; 
-y_length = num_y*dy;
-t_length = kgrid.t_array(end); 
+% define a second k-space grid using the dimensions of p_xy
+[Nx_recon, Ny_recon] = size(p_xy);
+kgrid_recon = kWaveGrid(Nx_recon, kgrid.dt * medium.sound_speed, Ny_recon, dy);
 
-mgrid = set_grid(dt, t_length, dx, x_length, dy, y_length);
+% resample p_xy to be the same size as source.p0
+p_xy_rs = interp2(kgrid_recon.y, kgrid_recon.x - min(kgrid_recon.x(:)), p_xy, kgrid.y, kgrid.x - min(kgrid.x(:)));
 
-% define the computational domain   
-source_p = kwave_P_time(:, 1:8:end).';
 
-% assign the properties of the propagation medium   
-medium.c    = 1500;
-medium.rho  = 1000;
-medium.beta = 0;
-medium.ca   = 0;
-medium.cb   = 2.0;
-medium.NRL_gamma = 0.9;
-medium.NRL_alpha = 0.009;
+% plot the initial pressure and sensor distribution
+figure;
+imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, source.p0 + sensor.mask * disc_magnitude, [-disc_magnitude, disc_magnitude]);
+colormap(getColorMap);
+ylabel('x-position [mm]');
+xlabel('y-position [mm]');
+axis image;
+colorbar;
+scaleFig(1, 0.65);
 
-% backward projection with TMDM to reconstruct the initial source distribution  
-sensor_mask = ones(mgrid.num_x, mgrid.num_y+1);
-p = Backward2D(mgrid, medium, source_p, sensor_mask, 0, 'NRL'); 
+% plot the simulated sensor data
+figure;
+imagesc(sensor_data, [-1, 1]);
+colormap(getColorMap);
+ylabel('Sensor Position');
+xlabel('Time Step');
+colorbar;
+
+% plot the reconstructed initial pressure 
+figure;
+imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p_xy_rs, [-disc_magnitude, disc_magnitude]);
+colormap(getColorMap);
+ylabel('x-position [mm]');
+xlabel('y-position [mm]');
+axis image;
+colorbar;
+scaleFig(1, 0.65);
+
+% plot a profile for comparison
+figure;
+plot(kgrid.y_vec * 1e3, source.p0(disc_x_pos, :), 'k-', kgrid.y_vec * 1e3, p_xy_rs(disc_x_pos, :), 'r--');
+xlabel('y-position [mm]');
+ylabel('Pressure');
+legend('Initial Pressure', 'Reconstructed Pressure');
+axis tight;
+set(gca, 'YLim', [0, 5.1]);
