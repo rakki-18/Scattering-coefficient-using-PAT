@@ -1,0 +1,21 @@
+Forward Mesh   = /home/rakshit/Downloads/IAS/NIRFAST/meshes/standard/circle2000_86_stnd
+Frequency      = 100.000000 MHz
+Data File      = /home/rakshit/Downloads/IAS/Scattering-coefficient-using-PAT/optical_data.paa
+Initial Regularization  = 10
+Filter         = 0
+Output Files   = /home/rakshit/Downloads/IAS/Scattering-coefficient-using-PAT/reconstruction_optical_mua.sol
+               = /home/rakshit/Downloads/IAS/Scattering-coefficient-using-PAT/reconstruction_optical_mus.sol
+Initial Guess mua = 1.000000e-02
+Initial Guess mus = 1.000000e+00
+---------------------------------
+Iteration Number          = 1
+Projection error          = 0.000000
+Amp Regularization        = 6.006717
+Phs Regularization        = 0.133504
+---------------------------------
+Iteration Number          = 2
+Projection error          = 0.000000
+Projection error change   = -4.324581 %
+---------------------------------
+STOPPING CRITERIA REACHED
+Computation TimeRegularization = 1.685364
