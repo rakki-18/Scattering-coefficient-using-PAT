@@ -2,8 +2,8 @@
 
 % create the computational grid
 PML_size = 20;          % size of the PML in grid points
-Nx = 128 - 2*PML_size;  % number of grid points in the x (row) direction
-Ny = 256 - 2*PML_size;  % number of grid points in the y (column) direction
+Nx = 42 - 2*PML_size;  % number of grid points in the x (row) direction
+Ny = 42 - 2*PML_size;  % number of grid points in the y (column) direction
 dx = 0.1e-3;            % grid point spacing in the x direction [m]
 dy = 0.1e-3;            % grid point spacing in the y direction [m]
 kgrid = kWaveGrid(Nx, dx, Ny, dy);
@@ -12,18 +12,18 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy);
 medium.sound_speed = 1500;           % [m/s]
 
 % create initial pressure distribution using makeDisc
-disc_magnitude = 5; % [Pa]
-disc_x_pos = 60;    % [grid points]
-disc_y_pos = 140;  	% [grid points]
-disc_radius = 5;    % [grid points]
-disc_2 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
-
-disc_x_pos = 30;    % [grid points]
-disc_y_pos = 110; 	% [grid points]
-disc_radius = 8;    % [grid points]
-disc_1 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
-
-source.p0 = disc_1 + disc_2;
+% disc_magnitude = 5; % [Pa]
+% disc_x_pos = 0;    % [grid points]
+% disc_y_pos = 0;  	% [grid points]
+% disc_radius = 5;    % [grid points]
+% disc_2 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
+% 
+% disc_x_pos = 0;    % [grid points]
+% disc_y_pos = 0; 	% [grid points]
+% disc_radius = 8;    % [grid points]
+% disc_1 = disc_magnitude * makeDisc(Nx, Ny, disc_x_pos, disc_y_pos, disc_radius);
+% 
+% source.p0 = disc_1 +disc_2;
 
 % smooth the initial pressure distribution and restore the magnitude
 source.p0 = smooth(source.p0, true);
