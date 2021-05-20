@@ -1,16 +1,5 @@
 
-
-% create the computational grid
-PML_size = 20;          % size of the PML in grid points
-Nx = 42 - 2*PML_size;  % number of grid points in the x (row) direction
-Ny = 42 - 2*PML_size;  % number of grid points in the y (column) direction
-dx = 0.1e-3;            % grid point spacing in the x direction [m]
-dy = 0.1e-3;            % grid point spacing in the y direction [m]
-kgrid = kWaveGrid(Nx, dx, Ny, dy);
-
-% define the properties of the propagation medium
-medium.sound_speed = 1500;           % [m/s]
-
+load('variables.mat');
 % create initial pressure distribution using makeDisc
 % disc_magnitude = 5; % [Pa]
 % disc_x_pos = 0;    % [grid points]
