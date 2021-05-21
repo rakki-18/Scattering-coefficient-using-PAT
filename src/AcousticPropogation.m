@@ -1,8 +1,8 @@
 
-
+clearvars;
 % load the initial pressure distribution from an image and scale the
 % magnitude
-GruneisenParameter = 3;
+GruneisenParameter = 1;
 p0 = GruneisenParameter * loadImage('./Results/energy_distribution_H.jpg');
 
 % create the computational grid
@@ -34,16 +34,16 @@ sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 % =========================================================================
 
 % plot the initial pressure and sensor distribution
-% figure;
-% imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, source.p0 + cart2grid(kgrid, sensor.mask), [-1, 1]);
-% colormap(getColorMap);
-% ylabel('x-position [mm]');
-% xlabel('y-position [mm]');
-% axis image;
+figure;
+imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, source.p0 + cart2grid(kgrid, sensor.mask), [-GruneisenParameter, GruneisenParameter]);
+colormap(getColorMap);
+ylabel('x-position [mm]');
+xlabel('y-position [mm]');
+axis image;
 
 % plot the simulated sensor data
 figure;
-imagesc(sensor_data, [-1, 1]);
+imagesc(sensor_data, [-GruneisenParameter, GruneisenParameter]);
 colormap(getColorMap);
 ylabel('Sensor Position');
 xlabel('Time Step');
