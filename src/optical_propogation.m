@@ -1,8 +1,8 @@
 
 
-Mesh = load_mesh('./MeshSample/mesh5.node');
+Mesh = load_mesh('./MeshSample/mesh1');
 
-fluence_data = femdata('./MeshSample/mesh5.node',0);
+fluence_data = femdata('./MeshSample/mesh1',0);
 
 %Convert sparse matrix to full matrix 
 fluence_data.phi = full(fluence_data.phi);
