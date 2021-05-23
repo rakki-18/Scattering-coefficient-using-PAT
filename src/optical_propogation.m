@@ -45,6 +45,7 @@ function plotim(mesh,val)
 	    mesh.nodes(:,2),...
 	    mesh.nodes(:,3),...
 	    val);
+     
 
 shading interp;
 view(2);

@@ -3,7 +3,7 @@ clearvars;
 % load the initial pressure distribution from an image and scale the
 % magnitude
 GruneisenParameter = 1;
-p0 = GruneisenParameter * loadImage('./Results/energy_distribution_H.jpg');
+p0 = GruneisenParameter * loadImage('./Results/energy_distribution_new.jpg');
 
 % create the computational grid
 Nx = 128;           % number of grid points in the x (row) direction

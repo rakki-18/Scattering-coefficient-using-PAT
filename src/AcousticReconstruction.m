@@ -11,10 +11,11 @@ kgrid = kWaveGrid(Nx, dx, Ny, dy);
 % define the properties of the propagation medium
 medium.sound_speed = 1500;	% [m/s]
 
-% load the initial pressure distribution from an image and scale the
+% load the initial pressure distribution from the workspace and scale the
 % magnitude
 GruneisenParameter = 1;
-p0 = GruneisenParameter * loadImage('./Results/energy_distribution_H.jpg');
+load('variables.mat','image');
+p0 = image * GruneisenParameter;
 
 % smooth the initial pressure distribution and restore the magnitude
 p0 = smooth(p0, true);
@@ -71,14 +72,14 @@ colorbar;
 scaleFig(1, 0.65);
 
 % plot the reconstructed initial pressure 
-figure;
-imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0_recon, [-GruneisenParameter, GruneisenParameter]);
-colormap(getColorMap);
-ylabel('x-position [mm]');
-xlabel('y-position [mm]');
-axis image;
-colorbar;
-scaleFig(1, 0.65);
+% figure;
+% imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0_recon, [-GruneisenParameter, GruneisenParameter]);
+% colormap(getColorMap);
+% ylabel('x-position [mm]');
+% xlabel('y-position [mm]');
+% axis image;
+% colorbar;
+% scaleFig(1, 0.65);
 
 % apply a positivity condition
 p0_recon(p0_recon < 0) = 0;
