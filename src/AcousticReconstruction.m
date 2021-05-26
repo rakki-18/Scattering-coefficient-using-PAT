@@ -15,6 +15,7 @@ medium.sound_speed = 1500;	% [m/s]
 % magnitude
 GruneisenParameter = 1;
 load('variables.mat','image');
+disp(image);
 p0 = image * GruneisenParameter;
 
 % smooth the initial pressure distribution and restore the magnitude

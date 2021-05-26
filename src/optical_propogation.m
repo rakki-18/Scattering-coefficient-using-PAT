@@ -35,7 +35,7 @@ plotim(Mesh,H);
 title('Energy distribution','FontSize',20);
 colorbar('horiz');
 
-
+mesh2matrix(H,Mesh.nodes);
 
 %% plot image function
 function plotim(mesh,val)
