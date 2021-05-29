@@ -4,7 +4,7 @@ mua_reconstruction(H,initial_value,Mesh);
 function mua_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 100;
+max_iterations = 4;
 regularisation_parameter = 40;
 
 nodes = size(H,1);
@@ -17,15 +17,48 @@ mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 
 
 for i = 1:max_iterations
-    fprintf("%d iterations started",i);
+    fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new',0);
-    G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new);
-    save('variables');
+    G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
+    % Taking sum along the rows as there are more than one source
+    fluence_new.phi = sum(fluence_new.phi, 2);
     delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
+    
+    % Find error in calculation
+    error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua),1);
+    disp(error_H);
+    error_mua = abs(Mesh.mua - mua);
+    error_mus = abs(Mesh.mus - mus);
+    
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
+    save('variables');
+    
+    
     
 end
 
+%% PLOTTING RESULTS
+figure;
+plotim(Mesh,mua);
+title('mua obtained','FontSize',20);
+colorbar('horiz');
+
+figure;
+plotim(Mesh,Mesh.mua);
+title('actual mua','FontSize',20);
+colorbar('horiz');
+
+figure;
+plotim(Mesh,mus);
+title('mus obtained','FontSize',20);
+colorbar('horiz');
+
+figure;
+plotim(Mesh,Mesh.mus);
+title('actual mus','FontSize',20);
+colorbar('horiz');
+
+   
 end
 
 function [mesh_new] = new_mesh(Mesh,mua,mus,kappa,mesh_name)
@@ -39,10 +72,11 @@ save_mesh(mesh_new,mesh_loc);
 end
 
 function [delta_t] = find_delta_t(G, regularisation_parameter,H, Hcal)
+delta_t = zeros(2*size(H,1),1);
 hessian = transpose(G)*G;
-delta_t = hessian + regularisation_parameter;
-delta_t = inv(delta_t);
-delta_t = delta_t*transpose(G)*(H - Hcal);
+delta_t = hessian + regularisation_parameter*eye(size(hessian,1));
+delta_t = delta_t\transpose(G);
+delta_t = delta_t*(H - Hcal);
 end
 
 function [kappa] = find_kappa(mua,mus)
@@ -60,12 +94,12 @@ mus = (1./(3.*kappa))-mua;
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end
 
-function [G] = find_jacobian(mua,mus,kappa,mesh_new,fluence)
+function [G] = find_jacobian(mua,mus,kappa,mesh_new,fluence,iter)
 G = zeros(size(mua,1), 2*size(mua,1));
 delta = 0.0001;
-% for i = 1: size(kappa,1)
-for i = 1: 10
-    fprintf("%d iteration in Jacobian started\n",i);
+for i = 1: size(kappa,1)
+% for i = 1: 10
+    fprintf("%d iteration in Jacobian started. %d th iteration\n",i,iter);
     temp_mua = mua;
     temp_mua(i) = mua(i) + delta;
     temp_mus = mus;
@@ -81,9 +115,9 @@ for i = 1: 10
     end
 end
 
-% for i = 1: size(mua,1)
-for i = 1: 10
-    fprintf("%d iteration in Jacobian mua started\n",i);
+for i = 1: size(mua,1)
+% for i = 1: 10   
+    fprintf("%d iteration in Jacobian mua started. %d th iteration\n",i,iter);
     temp_mua = mua;
     temp_mua(i) = mua(i) + delta;
     new_mesh(mesh_new,temp_mua,mus,kappa,"mesh_jacobian");
@@ -98,5 +132,23 @@ for i = 1: 10
         end
     end
 end
-    
+
+
+end
+%% plot image function
+function plotim(mesh,val)
+
+       h = trisurf(mesh.elements,...
+	    mesh.nodes(:,1),...
+	    mesh.nodes(:,2),...
+	    mesh.nodes(:,3),...
+	    val);
+     
+
+shading interp;
+view(2);
+axis equal; 
+axis off;
+colormap hot;
+
 end
