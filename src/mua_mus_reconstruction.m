@@ -1,6 +1,6 @@
 % Reconstructs the value of mua and mus given the value of H and the initial mua and mus values
 initial_value = [0.01,1.00];
-mua_reconstruction(H,initial_value,Mesh);
+mua_reconstruction(H_recon,initial_value,Mesh);
 function mua_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
@@ -25,7 +25,7 @@ for i = 1:max_iterations
     delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
     
     % Find error in calculation
-    error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua),1);
+    error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
     disp(error_H);
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
@@ -88,8 +88,8 @@ end
 end
 
 function [mua,mus,kappa,mesh_new] = update(delta_t, mua, mus, kappa,Mesh)
-mua = mua + delta_t(end/2+1:end);
-kappa = kappa + delta_t(1:end/2);
+mua = mua + 50*delta_t(end/2+1:end);
+kappa = kappa + 50*delta_t(1:end/2);
 mus = (1./(3.*kappa))-mua;
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end

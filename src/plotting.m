@@ -1,11 +1,11 @@
 figure;
-plotim(Mesh,mua);
-title('Fluence','FontSize',20);
+plotim(Mesh,H_recon);
+title('H_recon','FontSize',20);
 colorbar('horiz');
 
 figure;
-plotim(Mesh,Mesh.mua);
-title('Fluence','FontSize',20);
+plotim(Mesh,H/100);
+title('Actual H','FontSize',20);
 colorbar('horiz');
 
 %% plot image function

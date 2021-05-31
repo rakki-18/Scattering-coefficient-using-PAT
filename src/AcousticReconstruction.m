@@ -15,8 +15,10 @@ medium.sound_speed = 1500;	% [m/s]
 % magnitude
 GruneisenParameter = 1;
 load('variables.mat','image');
-disp(image);
 p0 = image * GruneisenParameter;
+
+% store the initial shape of the image for inversion later.
+initial_shape = size(p0);
 
 % smooth the initial pressure distribution and restore the magnitude
 p0 = smooth(p0, true);
@@ -105,3 +107,7 @@ ylabel('Pressure');
 legend('Initial Pressure', 'Time Reversal');
 axis tight;
 set(gca, 'YLim', [0, 5.1]);
+
+% resize back to the initial shape
+p0_recon = resize(p0_recon, initial_shape);
+save('variables','p0_recon','-append');
