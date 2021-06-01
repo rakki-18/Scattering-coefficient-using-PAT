@@ -46,15 +46,15 @@ colorbar('horiz');
 % title('actual mua','FontSize',20);
 % colorbar('horiz');
 
-% figure;
-% plotim(Mesh,mus);
-% title('mus obtained','FontSize',20);
-% colorbar('horiz');
-
 figure;
-plotim(Mesh,Mesh.mus);
-title('actual mus','FontSize',20);
+plotim(Mesh,mus);
+title('mus obtained','FontSize',20);
 colorbar('horiz');
+
+% figure;
+% plotim(Mesh,Mesh.mus);
+% title('actual mus','FontSize',20);
+% colorbar('horiz');
 
    
 end

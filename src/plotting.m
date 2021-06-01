@@ -1,8 +1,8 @@
 
 
 figure;
-plotim(Mesh,Mesh.mua);
-title('\mu_a','FontSize',20);
+plotim(Mesh,H);
+title('Reconstructed energy distribution','FontSize',10);
 colorbar('horiz');
 
 %% plot image function
