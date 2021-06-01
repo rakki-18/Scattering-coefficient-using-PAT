@@ -3,9 +3,13 @@
 function optical_propogation(meshName)
 
 % Load the mesh
-meshLoc = "./MeshSample/" + string(meshName);
+meshLoc = "./MeshSample/" + string(meshName) + "/" + string(meshName);
 meshLoc = char(meshLoc);
 Mesh = load_mesh(meshLoc);
+
+% Assert that the sources are at the boundary
+Mesh.source.coord(:,1) = min(Mesh.nodes(:,1));
+save_mesh(Mesh,meshLoc);
 
 % Calculate the fluence
 fluence_data = femdata(meshLoc,0);

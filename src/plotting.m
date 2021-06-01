@@ -1,11 +1,8 @@
-figure;
-plotim(Mesh,H_recon);
-title('H_recon','FontSize',20);
-colorbar('horiz');
+
 
 figure;
-plotim(Mesh,H);
-title('Actual H','FontSize',20);
+plotim(Mesh,Mesh.mua);
+title('\mu_a','FontSize',20);
 colorbar('horiz');
 
 %% plot image function

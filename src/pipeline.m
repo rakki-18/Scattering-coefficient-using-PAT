@@ -1,4 +1,4 @@
-meshName = 'mesh1';
+meshName = 'mesh2';
 % run the optical propogation on the mesh
 optical_propogation(meshName);
 

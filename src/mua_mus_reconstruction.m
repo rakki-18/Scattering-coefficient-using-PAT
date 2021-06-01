@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 4;
-regularisation_parameter = 40;
+max_iterations = 3;
+regularisation_parameter = 1;
 
 nodes = size(H,1);
 
@@ -16,7 +16,7 @@ mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 % iterative update of mua and mus values
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
-    fluence_new = femdata('./MeshSample/mesh_new',0);
+    fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
     G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
     % Taking sum along the rows as there are more than one source
     fluence_new.phi = sum(fluence_new.phi, 2);
@@ -65,7 +65,7 @@ mesh_new = Mesh;
 mesh_new.mua = mua;
 mesh_new.mus = mus;
 mesh_new.kappa = kappa;
-mesh_loc = "./MeshSample/" + mesh_name;
+mesh_loc = "./MeshSample/" + mesh_name + "/" + mesh_name;
 mesh_loc = char(mesh_loc);
 save_mesh(mesh_new,mesh_loc);
 end
@@ -93,8 +93,8 @@ end
 
 % updates the mua, mus and kappa values based on delta_t
 function [mua,mus,kappa,mesh_new] = update(delta_t, mua, mus, kappa,Mesh)
-mua = mua + 50*delta_t(end/2+1:end);
-kappa = kappa + 50*delta_t(1:end/2);
+mua = mua + delta_t(end/2+1:end);
+kappa = kappa + delta_t(1:end/2);
 mus = (1./(3.*kappa))-mua;
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end
@@ -108,13 +108,11 @@ delta = 0.0001;
 for i = 1: size(kappa,1)
 % for i = 1: 10
     fprintf("%d iteration in Jacobian started. %d th iteration\n",i,iter);
-    temp_mua = mua;
-    temp_mua(i) = mua(i) + delta;
     temp_mus = mus;
     temp_mus(i) = mus(i) + delta;
-    temp_kappa = find_kappa(temp_mua,temp_mus);
-    new_mesh(mesh_new,temp_mua,temp_mus, temp_kappa,"mesh_jacobian");
-    fluence_data = femdata('./MeshSample/mesh_jacobian',0);
+    temp_kappa = find_kappa(mua,temp_mus);
+    new_mesh(mesh_new,mua,temp_mus, temp_kappa,"mesh_jacobian");
+    fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
     delta_kappa = temp_kappa(i) - kappa(i);
     
     for j = 1: size(kappa,1)
@@ -129,7 +127,7 @@ for i = 1: size(mua,1)
     temp_mua = mua;
     temp_mua(i) = mua(i) + delta;
     new_mesh(mesh_new,temp_mua,mus,kappa,"mesh_jacobian");
-    fluence_data = femdata('./MeshSample/mesh_jacobian',0);
+    fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
     for j = 1: size(mua,1)
         if(i~=j)
             dphi = (fluence_data.phi(j) - fluence.phi(j))/delta;
