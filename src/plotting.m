@@ -4,7 +4,7 @@ title('H_recon','FontSize',20);
 colorbar('horiz');
 
 figure;
-plotim(Mesh,H/100);
+plotim(Mesh,H);
 title('Actual H','FontSize',20);
 colorbar('horiz');
 

@@ -1,5 +1,11 @@
+% Initial pressure source is saved in the "variables" workspace as "image".
+% Simulates the acoustic propogation on the pressure source and gets the
+% pressure values at the boundaries.
+% Adds noise to the sensor data values and then reconstructs the initial
+% pressure source using time reversal method
 
-clearvars;
+function AcousticReconstruction(image)
+
 % create the computational grid
 PML_size = 20;              % size of the PML in grid points
 Nx = 128 - 2 * PML_size;    % number of grid points in the x direction
@@ -14,7 +20,7 @@ medium.sound_speed = 1500;	% [m/s]
 % load the initial pressure distribution from the workspace and scale the
 % magnitude
 GruneisenParameter = 1;
-load('variables.mat','image');
+
 p0 = image * GruneisenParameter;
 
 % store the initial shape of the image for inversion later.
@@ -74,15 +80,6 @@ axis image;
 colorbar;
 scaleFig(1, 0.65);
 
-% plot the reconstructed initial pressure 
-% figure;
-% imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0_recon, [-GruneisenParameter, GruneisenParameter]);
-% colormap(getColorMap);
-% ylabel('x-position [mm]');
-% xlabel('y-position [mm]');
-% axis image;
-% colorbar;
-% scaleFig(1, 0.65);
 
 % apply a positivity condition
 p0_recon(p0_recon < 0) = 0;
@@ -111,3 +108,4 @@ set(gca, 'YLim', [0, 5.1]);
 % resize back to the initial shape
 p0_recon = resize(p0_recon, initial_shape);
 save('variables','p0_recon','-append');
+end

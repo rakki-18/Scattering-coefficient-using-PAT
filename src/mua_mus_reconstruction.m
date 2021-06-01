@@ -1,7 +1,5 @@
 % Reconstructs the value of mua and mus given the value of H and the initial mua and mus values
-initial_value = [0.01,1.00];
-mua_reconstruction(H_recon,initial_value,Mesh);
-function mua_reconstruction(H,initial_value,Mesh)
+function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
 max_iterations = 4;
@@ -15,7 +13,7 @@ mus = zeros(nodes,1) + initial_value(2);
 kappa = find_kappa(mua,mus);
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 
-
+% iterative update of mua and mus values
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new',0);
@@ -31,7 +29,7 @@ for i = 1:max_iterations
     error_mus = abs(Mesh.mus - mus);
     
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
-    save('variables');
+    save('variables','-append');
     
     
     
@@ -43,15 +41,15 @@ plotim(Mesh,mua);
 title('mua obtained','FontSize',20);
 colorbar('horiz');
 
-figure;
-plotim(Mesh,Mesh.mua);
-title('actual mua','FontSize',20);
-colorbar('horiz');
+% figure;
+% plotim(Mesh,Mesh.mua);
+% title('actual mua','FontSize',20);
+% colorbar('horiz');
 
-figure;
-plotim(Mesh,mus);
-title('mus obtained','FontSize',20);
-colorbar('horiz');
+% figure;
+% plotim(Mesh,mus);
+% title('mus obtained','FontSize',20);
+% colorbar('horiz');
 
 figure;
 plotim(Mesh,Mesh.mus);
@@ -61,6 +59,7 @@ colorbar('horiz');
    
 end
 
+% Creates a new mesh, "mesh_name" having the mua, mus and kappa values
 function [mesh_new] = new_mesh(Mesh,mua,mus,kappa,mesh_name)
 mesh_new = Mesh;
 mesh_new.mua = mua;
@@ -71,7 +70,11 @@ mesh_loc = char(mesh_loc);
 save_mesh(mesh_new,mesh_loc);
 end
 
+% finding the update of optical parameters from the jacobian matrix,
+% calculated energy distribution and the actual energy distribution
 function [delta_t] = find_delta_t(G, regularisation_parameter,H, Hcal)
+
+% (GtG + lambda*I)delta_t = Gt*(Em - Ec)
 delta_t = zeros(2*size(H,1),1);
 hessian = transpose(G)*G;
 delta_t = hessian + regularisation_parameter*eye(size(hessian,1));
@@ -79,6 +82,7 @@ delta_t = delta_t\transpose(G);
 delta_t = delta_t*(H - Hcal);
 end
 
+% helper function to find kappa from mua and mus values
 function [kappa] = find_kappa(mua,mus)
 kappa = zeros(size(mua));
 for i = 1: size(mua,1)
@@ -87,6 +91,7 @@ for i = 1: size(mua,1)
 end
 end
 
+% updates the mua, mus and kappa values based on delta_t
 function [mua,mus,kappa,mesh_new] = update(delta_t, mua, mus, kappa,Mesh)
 mua = mua + 50*delta_t(end/2+1:end);
 kappa = kappa + 50*delta_t(1:end/2);
@@ -94,7 +99,10 @@ mus = (1./(3.*kappa))-mua;
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end
 
+% finding the jacobian matrix which is the derivative of energy distributin
+% wrt kappa and mua values
 function [G] = find_jacobian(mua,mus,kappa,mesh_new,fluence,iter)
+
 G = zeros(size(mua,1), 2*size(mua,1));
 delta = 0.0001;
 for i = 1: size(kappa,1)

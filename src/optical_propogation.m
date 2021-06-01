@@ -1,8 +1,14 @@
+% Runs the optical propagation on the mesh, "meshName"
+% Calculates the fluence and saves the energy distribution as a mat file
+function optical_propogation(meshName)
 
+% Load the mesh
+meshLoc = "./MeshSample/" + string(meshName);
+meshLoc = char(meshLoc);
+Mesh = load_mesh(meshLoc);
 
-Mesh = load_mesh('./MeshSample/mesh1');
-
-fluence_data = femdata('./MeshSample/mesh1',0);
+% Calculate the fluence
+fluence_data = femdata(meshLoc,0);
 
 %Convert sparse matrix to full matrix 
 fluence_data.phi = full(fluence_data.phi);
@@ -13,13 +19,17 @@ fluence_data.phi = sum(fluence_data.phi, 2);
 % Calculating energy distribution
 H = fluence_data.phi.*Mesh.mua;
 
-% subplot(1,4,1);
+% % %
+% PLOTTING THE DISTRIBUTION
+% % %
+
+
 figure;
 plotim(Mesh,Mesh.mua);
 title('\mu_a','FontSize',20);
 colorbar('horiz');
 
-% subplot(1,4,2);
+
 figure;
 plotim(Mesh,Mesh.mus);
 title('\mu_s','FontSize',20);
@@ -35,7 +45,7 @@ plotim(Mesh,H);
 title('Energy distribution','FontSize',20);
 colorbar('horiz');
 
-mesh2matrix(H,Mesh.nodes);
+save('variables','H','Mesh');
 
 %% plot image function
 function plotim(mesh,val)
@@ -53,4 +63,5 @@ axis equal;
 axis off;
 colormap hot;
 
+end
 end

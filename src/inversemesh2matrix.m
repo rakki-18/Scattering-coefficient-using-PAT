@@ -1,6 +1,6 @@
-inverseMesh2matrix(p0_recon,Mesh.nodes);
 
-function inverseMesh2matrix(p0,node)
+
+function inversemesh2matrix(p0,node)
 
 % Input - p0 : a 2D matrix source where source(i,j) represents the energy distribution of the node located at the cell (i,j) 
 %         node : the coordinate points of the nodes in the mesh.

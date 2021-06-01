@@ -1,0 +1,28 @@
+meshName = 'mesh1';
+% run the optical propogation on the mesh
+optical_propogation(meshName);
+
+% Load variables from the workspace
+load('variables','H','Mesh');
+% Convert H vector to a 2D matrix
+mesh2matrix(H,Mesh.nodes);
+
+% energy distribution matrix is now saved as "image" in the
+% workspace
+load('variables.mat','image');
+% Simulate the Acoustic Reconstruction on the initial pressure source
+AcousticReconstruction(image);
+
+% Load the reconstructed pressure distribution value
+load('variables','p0_recon');
+% Get the reconstructed H vector from the 2D reconstructed pressure source
+inversemesh2matrix(p0_recon,Mesh.nodes);
+
+% Provide the initial homogeneous guess for mua and mus values
+% This will be the known mua and mus value for the background.
+initial_value = [0.01,1.00];
+load('variables','H_recon');
+
+% Reconstruct the values of mua and mus from the reconstructed energy
+% distribution vector
+mua_mus_reconstruction(H_recon,initial_value,Mesh);
