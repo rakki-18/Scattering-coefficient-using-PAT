@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 3;
-regularisation_parameter = 1;
+max_iterations = 10;
+regularisation_parameter = 0.1;
 
 nodes = size(H,1);
 
@@ -14,6 +14,8 @@ kappa = find_kappa(mua,mus);
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 
 % iterative update of mua and mus values
+error_list = [];
+error_list_mua = [];
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
@@ -24,10 +26,10 @@ for i = 1:max_iterations
     
     % Find error in calculation
     error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
-    disp(error_H);
+    error_list = [error_list error_H];
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
-    
+    error_list_mua = [error_list_mua error_mua];
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
     save('variables','-append');
     
@@ -139,6 +141,14 @@ for i = 1: size(mua,1)
     end
 end
 
+% Log the condition matrix value 
+
+fid = fopen(fullfile('', 'conditionMatrix.log'), 'a');
+if fid == -1
+  error('Cannot open log file.');
+end
+fprintf(fid, '%d iteration: %d\n', i, cond(G));
+fclose(fid);
 
 end
 %% plot image function
