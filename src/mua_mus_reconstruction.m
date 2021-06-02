@@ -20,8 +20,8 @@ for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
     G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
-    % Taking sum along the rows as there are more than one source
-    fluence_new.phi = sum(fluence_new.phi, 2);
+    % Taking average along the rows as there are more than one source
+    fluence_new.phi = sum(fluence_new.phi, 2)/size(fluence_new.phi,2);
     delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
     
     % Find error in calculation
