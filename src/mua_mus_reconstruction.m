@@ -3,7 +3,7 @@ function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
 max_iterations = 5;
-regularisation_parameter = 0.1;
+regularisation_parameter = 1;
 
 nodes = size(H,1);
 
@@ -19,19 +19,20 @@ error_list_mua = [];
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
-    G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
-    % Taking average along the rows as there are more than one source
+    
+    % Taking average along the rows as  there are more than one source
     fluence_new.phi = sum(fluence_new.phi, 2)/size(fluence_new.phi,2);
+    
+    G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
     delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
     
+    [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
     % Find error in calculation
     error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
     error_list = [error_list error_H];
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
     error_list_mua = [error_list_mua error_mua];
-    [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
-    
     %% PLOTTING RESULTS
     figure;
     plotim(Mesh,mua);
@@ -109,6 +110,9 @@ for i = 1: size(kappa,1)
     temp_kappa = find_kappa(mua,temp_mus);
     new_mesh(mesh_new,mua,temp_mus, temp_kappa,"mesh_jacobian");
     fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
+    % Taking average along the rows as  there are more than one source
+    fluence_data.phi = sum(fluence_data.phi, 2)/size(fluence_data.phi,2);
+    
     delta_kappa = temp_kappa(i) - kappa(i);
     
     for j = 1: size(kappa,1)
@@ -124,6 +128,8 @@ for i = 1: size(mua,1)
     temp_mua(i) = mua(i) + delta;
     new_mesh(mesh_new,temp_mua,mus,kappa,"mesh_jacobian");
     fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
+    % Taking average along the rows as  there are more than one source
+    fluence_data.phi = sum(fluence_data.phi, 2)/size(fluence_data.phi,2);
     for j = 1: size(mua,1)
         if(i~=j)
             dphi = (fluence_data.phi(j) - fluence.phi(j))/delta;
@@ -135,13 +141,13 @@ for i = 1: size(mua,1)
     end
 end
 
-% Log the condition matrix value 
+% Log the condition number of Jacobian matrix 
 
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'a');
 if fid == -1
   error('Cannot open log file.');
 end
-fprintf(fid, '%d iteration: %d\n', i, cond(G));
+fprintf(fid, 'Condition number of Jacobian matrix at %d iteration: %d\n', iter, cond(G));
 fclose(fid);
 
 end
