@@ -2,7 +2,7 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 10;
+max_iterations = 5;
 regularisation_parameter = 0.1;
 
 nodes = size(H,1);
@@ -31,32 +31,26 @@ for i = 1:max_iterations
     error_mus = abs(Mesh.mus - mus);
     error_list_mua = [error_list_mua error_mua];
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
+    
+    %% PLOTTING RESULTS
+    figure;
+    plotim(Mesh,mua);
+    title('mua obtained','FontSize',20);
+    colorbar('horiz');
+
+    figure;
+    plotim(Mesh,mus);
+    title('mus obtained','FontSize',20);
+    colorbar('horiz');
     save('variables','-append');
     
     
     
 end
 
-%% PLOTTING RESULTS
-figure;
-plotim(Mesh,mua);
-title('mua obtained','FontSize',20);
-colorbar('horiz');
 
-% figure;
-% plotim(Mesh,Mesh.mua);
-% title('actual mua','FontSize',20);
-% colorbar('horiz');
 
-figure;
-plotim(Mesh,mus);
-title('mus obtained','FontSize',20);
-colorbar('horiz');
 
-% figure;
-% plotim(Mesh,Mesh.mus);
-% title('actual mus','FontSize',20);
-% colorbar('horiz');
 
    
 end
@@ -149,22 +143,5 @@ if fid == -1
 end
 fprintf(fid, '%d iteration: %d\n', i, cond(G));
 fclose(fid);
-
-end
-%% plot image function
-function plotim(mesh,val)
-
-       h = trisurf(mesh.elements,...
-	    mesh.nodes(:,1),...
-	    mesh.nodes(:,2),...
-	    mesh.nodes(:,3),...
-	    val);
-     
-
-shading interp;
-view(2);
-axis equal; 
-axis off;
-colormap hot;
 
 end

@@ -1,9 +1,6 @@
 
 
-figure;
-plotim(Mesh,H);
-title('Reconstructed energy distribution','FontSize',10);
-colorbar('horiz');
+
 
 %% plot image function
 function plotim(mesh,val)
