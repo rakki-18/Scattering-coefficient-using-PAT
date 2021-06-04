@@ -18,6 +18,7 @@ load('variables','p0_recon');
 % Get the reconstructed H vector from the 2D reconstructed pressure source
 inversemesh2matrix(p0_recon,Mesh.nodes);
 
+load('variables','H_recon');
 %Plot the reconstructed energy distribution
 figure;
 plotim(Mesh,H_recon);
@@ -27,7 +28,7 @@ colorbar('horiz');
 % Provide the initial homogeneous guess for mua and mus values
 % This will be the known mua and mus value for the background.
 initial_value = [0.01,1.00];
-load('variables','H_recon');
+
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector

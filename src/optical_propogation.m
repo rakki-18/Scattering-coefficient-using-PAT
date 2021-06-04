@@ -18,7 +18,7 @@ fluence_data = femdata(meshLoc,0);
 fluence_data.phi = full(fluence_data.phi);
 
 % Taking sum along the rows as there are more than one source
-fluence_data.phi = sum(fluence_data.phi, 2);
+fluence_data.phi = sum(fluence_data.phi, 2)/size(fluence_data.phi,2);
 
 % Calculating energy distribution
 H = fluence_data.phi.*Mesh.mua;

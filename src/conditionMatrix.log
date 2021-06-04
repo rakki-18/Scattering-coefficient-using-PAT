@@ -1,16 +1,6 @@
 
-1681 iteration: 5.638234e+02
-1681 iteration: 5.582866e+02
-1681 iteration: 5.542543e+02
-1681 iteration: 5.688721e+02
-1681 iteration: 7.712149e+02
-1681 iteration: 9.476328e+05
-1681 iteration: 8.853639e+07
-1681 iteration: 3.270689e+06
-1681 iteration: 6.612555e+07
-1681 iteration: 1.173013e+06
-1681 iteration: 5.638234e+02
-1681 iteration: 6.953171e+02
-1681 iteration: 7.684914e+02
-1681 iteration: 8.197996e+02
-1681 iteration: 8.595892e+02
+Condition number of Jacobian matrix at 1 iteration: 1.500308e+02
+Condition number of Jacobian matrix at 2 iteration: 1.495480e+02
+Condition number of Jacobian matrix at 3 iteration: 1.491383e+02
+Condition number of Jacobian matrix at 4 iteration: 1.487886e+02
+Condition number of Jacobian matrix at 5 iteration: 1.484753e+02

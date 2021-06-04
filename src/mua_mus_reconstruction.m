@@ -3,7 +3,7 @@ function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
 max_iterations = 5;
-regularisation_parameter = 1;
+regularisation_parameter = 0.05;
 
 nodes = size(H,1);
 
