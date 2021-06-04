@@ -1,4 +1,8 @@
-meshName = 'mesh2';
+meshName = 'mesh3';
+
+% Erasing the contents of the log file
+fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
+
 % run the optical propogation on the mesh
 optical_propogation(meshName);
 
