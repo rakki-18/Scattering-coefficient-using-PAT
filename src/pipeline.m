@@ -1,4 +1,4 @@
-meshName = 'mesh3';
+meshName = 'meshSpectral';
 
 % Erasing the contents of the log file
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');

@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 8;
-regularisation_parameter = 0.05;
+max_iterations = 3;
+regularisation_parameter = 0.01;
 
 nodes = size(H,1);
 
