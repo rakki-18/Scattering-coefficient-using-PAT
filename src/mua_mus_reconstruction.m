@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 3;
-regularisation_parameter = 0.01;
+max_iterations = 30;
+regularisation_parameter = 1;
 
 nodes = size(H,1);
 
@@ -16,6 +16,7 @@ mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 % iterative update of mua and mus values
 error_list = [;;];
 error_list_mua = [];
+error_list_mus = [];
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
@@ -33,6 +34,7 @@ for i = 1:max_iterations
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
     error_list_mua = [error_list_mua error_mua];
+    error_list_mus = [error_list_mus error_mus];
     %% PLOTTING RESULTS
     figure;
     plotim(Mesh,mua);

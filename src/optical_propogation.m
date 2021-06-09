@@ -9,7 +9,7 @@ Mesh = load_mesh(meshLoc);
 
 if(Mesh.type == 'stnd')
     % Calculate the fluence
-    fluence_data = femdata(meshLoc,100);
+    fluence_data = femdata(meshLoc,0);
 
     %Convert sparse matrix to full matrix 
     fluence_data.phi = full(fluence_data.phi);
