@@ -1,4 +1,4 @@
-meshName = 'mesh3';
+meshName = 'meshSpectral';
 
 % Erasing the contents of the log file
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
@@ -8,6 +8,11 @@ optical_propogation(meshName);
 
 % Load variables from the workspace
 load('variables','H','Mesh');
+
+if(Mesh.type == 'spec')
+    % Only one wavelength is considered as of now
+    H = H(:,1);
+end
 % Convert H vector to a 2D matrix
 mesh2matrix(H,Mesh.nodes);
 

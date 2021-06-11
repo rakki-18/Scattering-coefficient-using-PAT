@@ -46,17 +46,18 @@ if(Mesh.type == 'stnd')
     title('Energy distribution','FontSize',20);
     colorbar('horiz');
 
-    save('variables','H','Mesh');
+    save('variables','H','Mesh','-append');
 elseif(Mesh.type == 'spec')
     % Calculate the fluence
-    [fluence_data,mua_lambda,mus_lambda] = femdata_spectral(Mesh,0,Mesh.wv);
+    [fluence_data,Mesh] = femdata(Mesh,0,Mesh.wv);
+%     disp(size(Mesh.mua));
 
     % Calculating energy distribution
-    H = fluence_data.phi.*mua_lambda;
+    H = fluence_data.phi.*Mesh.mua;
     
     
     % Iterate through all the wavelengths
-    for i = 1: size(Mesh.wv,1)
+    for i = 1: 1
         
         % % %
         % PLOTTING THE DISTRIBUTION
@@ -64,13 +65,13 @@ elseif(Mesh.type == 'spec')
 
 
         figure;
-        plotim(Mesh,mua_lambda(:,i));
+        plotim(Mesh,Mesh.mua(:,i));
         title('\mu_a','FontSize',20);
         colorbar('horiz');
 
 
         figure;
-        plotim(Mesh,mus_lambda(:,i));
+        plotim(Mesh,Mesh.mus(:,i));
         title('\mu_s','FontSize',20);
         colorbar('horiz');
 
@@ -85,7 +86,7 @@ elseif(Mesh.type == 'spec')
         colorbar('horiz');
     end
 
-    save('variables','-append');
+    save('variables','H','Mesh','-append');
     
 end
 end

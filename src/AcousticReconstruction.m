@@ -1,4 +1,3 @@
-% Initial pressure source is saved in the "variables" workspace as "image".
 % Simulates the acoustic propogation on the pressure source and gets the
 % pressure values at the boundaries.
 % Adds noise to the sensor data values and then reconstructs the initial

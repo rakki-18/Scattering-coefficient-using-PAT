@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,initial_value,Mesh)
 
 %hyper parameters
-max_iterations = 30;
-regularisation_parameter = 1;
+max_iterations = 4;
+regularisation_parameter = 0.01;
 
 nodes = size(H,1);
 
@@ -30,6 +30,7 @@ for i = 1:max_iterations
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
     % Find error in calculation
     error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
+    save('variables','-append');
     error_list = [error_list [error_H;sum(abs(Mesh.mua - mua),1);sum(abs(Mesh.mus - mus),1)]];
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
