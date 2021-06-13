@@ -1,15 +1,12 @@
-% Reconstructs the value of mua and mus given the value of H and the initial mua and mus values
-function mua_mus_reconstruction(H,initial_value,Mesh)
+% Reconstructs the value of mua and mus given the value of H , initial mua and mus values
+function mua_mus_reconstruction(H,mua,mus,Mesh)
 
 %hyper parameters
 max_iterations = 4;
 regularisation_parameter = 0.01;
 
-nodes = size(H,1);
+nodes = size(H,1)/size(Mesh.wv,1);
 
-% initial guess of mua and mus
-mua = zeros(nodes,1) + initial_value(1);
-mus = zeros(nodes,1) + initial_value(2);
 kappa = find_kappa(mua,mus);
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 
@@ -19,10 +16,7 @@ error_list_mua = [];
 error_list_mus = [];
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
-    fluence_new = femdata('./MeshSample/mesh_new/mesh_new',0);
-    
-    % Taking average along the rows as  there are more than one source
-    fluence_new.phi = sum(fluence_new.phi, 2)/size(fluence_new.phi,2);
+    fluence_new = new_femdata_spectral(mesh_new,0);
     
     G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
     delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
@@ -36,14 +30,14 @@ for i = 1:max_iterations
     error_mus = abs(Mesh.mus - mus);
     error_list_mua = [error_list_mua error_mua];
     error_list_mus = [error_list_mus error_mus];
-    %% PLOTTING RESULTS
+    %% PLOTTING RESULTS for first wavelength
     figure;
-    plotim(Mesh,mua);
+    plotim(Mesh,mua(1:nodes));
     title('mua obtained','FontSize',20);
     colorbar('horiz');
 
     figure;
-    plotim(Mesh,mus);
+    plotim(Mesh,mus(1:nodes));
     title('mus obtained','FontSize',20);
     colorbar('horiz');
     save('variables','-append');
@@ -65,9 +59,9 @@ mesh_new = Mesh;
 mesh_new.mua = mua;
 mesh_new.mus = mus;
 mesh_new.kappa = kappa;
-mesh_loc = "./MeshSample/" + mesh_name + "/" + mesh_name;
-mesh_loc = char(mesh_loc);
-save_mesh(mesh_new,mesh_loc);
+% mesh_loc = "./Meshes/" + mesh_name + "/" + mesh_name;
+% mesh_loc = char(mesh_loc);
+% save_mesh(mesh_new,mesh_loc);
 end
 
 % finding the update of optical parameters from the jacobian matrix,
@@ -105,16 +99,16 @@ function [G] = find_jacobian(mua,mus,kappa,mesh_new,fluence,iter)
 
 G = zeros(size(mua,1), 2*size(mua,1));
 delta = 0.0001;
-for i = 1: size(kappa,1)
-% for i = 1: 10
+
+% for i = 1: size(kappa,1)
+for i = 1: 10
     fprintf("%d iteration in Jacobian started. %d th iteration\n",i,iter);
     temp_mus = mus;
     temp_mus(i) = mus(i) + delta;
     temp_kappa = find_kappa(mua,temp_mus);
-    new_mesh(mesh_new,mua,temp_mus, temp_kappa,"mesh_jacobian");
-    fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
-    % Taking average along the rows as  there are more than one source
-    fluence_data.phi = sum(fluence_data.phi, 2)/size(fluence_data.phi,2);
+    mesh_jacobian = new_mesh(mesh_new,mua,temp_mus, temp_kappa,"mesh_jacobian");
+    fluence_data = new_femdata_spectral(mesh_jacobian,0);
+
     
     delta_kappa = temp_kappa(i) - kappa(i);
     
@@ -124,15 +118,14 @@ for i = 1: size(kappa,1)
     end
 end
 
-for i = 1: size(mua,1)
-% for i = 1: 10   
+% for i = 1: size(mua,1)
+for i = 1: 10   
     fprintf("%d iteration in Jacobian mua started. %d th iteration\n",i,iter);
     temp_mua = mua;
     temp_mua(i) = mua(i) + delta;
-    new_mesh(mesh_new,temp_mua,mus,kappa,"mesh_jacobian");
-    fluence_data = femdata('./MeshSample/mesh_jacobian/mesh_jacobian',0);
-    % Taking average along the rows as  there are more than one source
-    fluence_data.phi = sum(fluence_data.phi, 2)/size(fluence_data.phi,2);
+    mesh_jacobian = new_mesh(mesh_new,temp_mua,mus,kappa,"mesh_jacobian");
+    fluence_data = new_femdata_spectral(mesh_jacobian,0);
+
     for j = 1: size(mua,1)
         if(i~=j)
             dphi = (fluence_data.phi(j) - fluence.phi(j))/delta;
@@ -143,6 +136,7 @@ for i = 1: size(mua,1)
         end
     end
 end
+
 
 % Log the condition number of Jacobian matrix 
 

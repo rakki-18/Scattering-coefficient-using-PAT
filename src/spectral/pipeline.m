@@ -28,11 +28,11 @@ for i = 1: size(Mesh.wv)
 
     % Load the reconstructed H for the particular wavelength
     load('variables.mat','H_partial');
-    % Plot the reconstructed energy distribution
-    figure;
-    plotim(Mesh,H_partial);
-    title('Reconstructed Energy distribution','FontSize',10);
-    colorbar('horiz');
+%     % Plot the reconstructed energy distribution
+%     figure;
+%     plotim(Mesh,H_partial);
+%     title('Reconstructed Energy distribution','FontSize',10);
+%     colorbar('horiz');
     H_recon = [H_recon; H_partial];
 end
 
@@ -41,8 +41,8 @@ end
 
 % Provide the initial homogeneous guess for mua and mus values
 % This would be calculated using the known concentrations of chromophores of the background.
-initial_value = calc_initial_value([0.01, 0.01, 0.4],[1, 1],Mesh.wv);
-
+[mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
+save('variables.mat','mua','mus','-append');
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector
