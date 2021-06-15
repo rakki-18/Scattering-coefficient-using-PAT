@@ -28,26 +28,26 @@ for i = 1: 1
     % % %
 
 
-%     figure;
-%     plotim(Mesh,Mesh.mua((i-1)*Nodes+1:i*Nodes));
-%     title('\mu_a','FontSize',20);
-%     colorbar('horiz');
-% 
-% 
-%     figure;
-%     plotim(Mesh,Mesh.mus((i-1)*Nodes+1:i*Nodes));
-%     title('\mu_s','FontSize',20);
-%     colorbar('horiz');
-% 
-%     figure;
-%     plotim(Mesh,fluence_data.phi((i-1)*Nodes+1:i*Nodes));
-%     title('Fluence','FontSize',20);
-%     colorbar('horiz');
-% 
-%     figure;
-%     plotim(Mesh,H((i-1)*Nodes+1:i*Nodes));
-%     title('Energy distribution','FontSize',20);
-%     colorbar('horiz');
+    figure;
+    plotim(Mesh,Mesh.mua((i-1)*Nodes+1:i*Nodes));
+    title('\mu_a','FontSize',20);
+    colorbar('horiz');
+
+
+    figure;
+    plotim(Mesh,Mesh.mus((i-1)*Nodes+1:i*Nodes));
+    title('\mu_s','FontSize',20);
+    colorbar('horiz');
+
+    figure;
+    plotim(Mesh,fluence_data.phi((i-1)*Nodes+1:i*Nodes));
+    title('Fluence','FontSize',20);
+    colorbar('horiz');
+
+    figure;
+    plotim(Mesh,H((i-1)*Nodes+1:i*Nodes));
+    title('Energy distribution','FontSize',20);
+    colorbar('horiz');
 end
 
 save('variables','H','Mesh','Nodes','-append');

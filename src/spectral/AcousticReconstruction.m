@@ -70,41 +70,41 @@ p0_recon = 2 * p0_recon;
 % =========================================================================
 
 % plot the initial pressure and sensor distribution
-figure;
-imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0 + sensor.mask * GruneisenParameter, [-GruneisenParameter, GruneisenParameter]);
-colormap(getColorMap);
-title('Actual Pressure distribution','FontSize',10);
-ylabel('x-position [mm]');
-xlabel('y-position [mm]');
-axis image;
-colorbar;
-scaleFig(1, 0.65);
+% figure;
+% imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0 + sensor.mask * GruneisenParameter, [-GruneisenParameter, GruneisenParameter]);
+% colormap(getColorMap);
+% title('Actual Pressure distribution','FontSize',10);
+% ylabel('x-position [mm]');
+% xlabel('y-position [mm]');
+% axis image;
+% colorbar;
+% scaleFig(1, 0.65);
 
 
 % apply a positivity condition
 p0_recon(p0_recon < 0) = 0;
 
-% plot the reconstructed initial pressure with positivity condition
-figure;
-imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0_recon, [-GruneisenParameter, GruneisenParameter]);
-colormap(getColorMap);
-title('Reconstructed Pressure distribution','FontSize',10);
-ylabel('x-position [mm]');
-xlabel('y-position [mm]');
-axis image;
-colorbar;
-scaleFig(1, 0.65);
-
-% plot a profile for comparison
-figure;
-profile = 30;
-plot(kgrid.y_vec * 1e3, p0(profile, :), 'k-', ...
-     kgrid.y_vec * 1e3, p0_recon(profile, :), 'b:');
-xlabel('y-position [mm]');
-ylabel('Pressure');
-legend('Initial Pressure', 'Time Reversal');
-axis tight;
-set(gca, 'YLim', [0, 5.1]);
+% % plot the reconstructed initial pressure with positivity condition
+% figure;
+% imagesc(kgrid.y_vec * 1e3, kgrid.x_vec * 1e3, p0_recon, [-GruneisenParameter, GruneisenParameter]);
+% colormap(getColorMap);
+% title('Reconstructed Pressure distribution','FontSize',10);
+% ylabel('x-position [mm]');
+% xlabel('y-position [mm]');
+% axis image;
+% colorbar;
+% scaleFig(1, 0.65);
+% 
+% % plot a profile for comparison
+% figure;
+% profile = 30;
+% plot(kgrid.y_vec * 1e3, p0(profile, :), 'k-', ...
+%      kgrid.y_vec * 1e3, p0_recon(profile, :), 'b:');
+% xlabel('y-position [mm]');
+% ylabel('Pressure');
+% legend('Initial Pressure', 'Time Reversal');
+% axis tight;
+% set(gca, 'YLim', [0, 5.1]);
 
 % resize back to the initial shape
 p0_recon = resize(p0_recon, initial_shape);

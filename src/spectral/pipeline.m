@@ -40,10 +40,12 @@ end
 
 
 % Provide the initial homogeneous guess for mua and mus values
-% This would be calculated using the known concentrations of chromophores of the background.
+% This would be calculated using the known concentrations of chromophores
+% of the background and the known scattering power and scattering amplitude
+% of the background.
 [mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
 save('variables.mat','mua','mus','-append');
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector
-% mua_mus_reconstruction(H_recon,initial_value,Mesh);
+mua_mus_reconstruction(H,mua,mus,Mesh);

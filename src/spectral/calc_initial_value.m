@@ -29,6 +29,6 @@ mua = E*concentration';
 mua = mua';
 % Stack mua of all the wavelengths below each other
 mua = mua(:);
-kappa = 1./(3*(mus+mua));
+
 
 end
