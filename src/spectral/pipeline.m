@@ -1,7 +1,8 @@
 meshName = 'crosstalk';
 
-% Erasing the contents of the log file
+% Erasing the contents of the log file and variables workspace
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
+save('variables');
 
 % run the optical propogation on the mesh
 optical_propogation(meshName);
