@@ -3,7 +3,8 @@ function mua_mus_reconstruction(H,mua,mus,Mesh)
 
 %hyper parameters
 max_iterations = 5;
-regularisation_parameter = 0.01;
+regularisation_parameter = 0.1;
+
 
 nodes = size(H,1)/size(Mesh.wv,1);
 
@@ -92,8 +93,10 @@ end
 
 % updates the mua, mus and kappa values based on delta_t
 function [mua,mus,kappa,mesh_new] = update(delta_t, mua, mus, kappa,Mesh)
-mua = mua + delta_t(end/2+1:end);
-kappa = kappa + delta_t(1:end/2);
+learning_rate_mua = 1;
+learning_rate_kappa = 100;
+mua = mua + learning_rate_mua*delta_t(end/2+1:end);
+kappa = kappa + learning_rate_kappa*delta_t(1:end/2);
 mus = (1./(3.*kappa))-mua;
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end
