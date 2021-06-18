@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,mua,mus,Mesh)
 
 %hyper parameters
-max_iterations = 4;
-regularisation_parameter = 1;
+max_iterations = 5;
+regularisation_parameter = 0.01;
 
 nodes = size(H,1)/size(Mesh.wv,1);
 
@@ -26,7 +26,7 @@ for i = 1:max_iterations
     
     % Find error in calculation
     error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
-    
+    clear fluence_new;
     error_list = [error_list [error_H;sum(abs(Mesh.mua - mua),1);sum(abs(Mesh.mus - mus),1)]];
     error_mua = abs(Mesh.mua - mua);
     error_mus = abs(Mesh.mus - mus);
@@ -34,7 +34,8 @@ for i = 1:max_iterations
     error_list_mus = [error_list_mus error_mus];
 
     [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
-    save('variables','-append');
+    clear delta_t;
+    save('variables','error_list','error_list_mua','error_list_mus','G','-append');
     %% PLOTTING RESULTS for first wavelength
     figure;
     plotim(Mesh,mua(1:nodes));
@@ -45,7 +46,7 @@ for i = 1:max_iterations
     plotim(Mesh,mus(1:nodes));
     title('mus obtained','FontSize',20);
     colorbar('horiz');
-    save('variables','-append');
+    
 
     
     
@@ -74,11 +75,14 @@ end
 function [delta_t] = find_delta_t(G, regularisation_parameter,H, Hcal)
 
 % (GtG + lambda*I)delta_t = Gt*(Em - Ec)
-delta_t = zeros(2*size(H,1),1);
+% delta_t = zeros(2*size(H,1),1);
 hessian = transpose(G)*G;
 delta_t = hessian + regularisation_parameter*eye(size(hessian,1));
+clear hessian;
 delta_t = delta_t\transpose(G);
+clear G;
 delta_t = delta_t*(H - Hcal);
+
 end
 
 % helper function to find kappa from mua and mus values
@@ -115,7 +119,9 @@ for i = 1: size(kappa,1)
     
     G(:,i) = (fluence_data.phi - fluence.phi)/delta;
     G(:,i) = G(:,i).*mua;
-
+    clear temp_kappa;
+    clear temp_mus;
+    clear fluence_data; clear mesh_jacobian;
 end
 
 for i = 1: size(mua,1)
@@ -130,7 +136,7 @@ for i = 1: size(mua,1)
     G(:,size(kappa,1)+i) = (fluence_data.phi - fluence.phi)/delta;
     G(:,size(kappa,1)+i) = G(:,size(kappa,1)+i).*mesh_new.mua;
     G(i,size(kappa,1)+i) = G(i,size(kappa,1)+i) + fluence.phi(i);
-  
+    clear mesh_jacobian; clear temp_mua; clear fluence_data;
 end
 
 

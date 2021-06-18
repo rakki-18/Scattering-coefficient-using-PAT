@@ -21,7 +21,7 @@ H = fluence_data.phi.*Mesh.mua;
 
 % Iterate through all the wavelengths
 % for i = 1: size(Mesh.wv)
-for i = 1: 2
+for i = 1: 1
     
     % % %
     % PLOTTING THE DISTRIBUTION
