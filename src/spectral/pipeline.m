@@ -1,4 +1,4 @@
-meshName = 'crosstalk2';
+meshName = 'crosstalk';
 
 % Erasing the contents of the log file and variables workspace
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
@@ -49,4 +49,4 @@ save('variables.mat','mua','mus','-append');
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector
-mua_mus_reconstruction(H,mua,mus,Mesh);
+mua_mus_reconstruction(H_recon,mua,mus,Mesh);
