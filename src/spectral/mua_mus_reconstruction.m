@@ -96,8 +96,10 @@ function [mua,mus,kappa,mesh_new] = update(delta_t, mua, mus, kappa,Mesh)
 learning_rate_mua = 1;
 learning_rate_kappa = 1;
 mua = mua + learning_rate_mua*delta_t(end/2+1:end);
-kappa = kappa + learning_rate_kappa*delta_t(1:end/2);
-mus = (1./(3.*kappa))-mua;
+% kappa = kappa + learning_rate_kappa*delta_t(1:end/2);
+mus = mus + learning_rate_kappa*delta_t(1:end/2);
+% mus = (1./(3.*kappa))-mua;
+kappa = find_kappa(mua,mus);
 mesh_new = new_mesh(Mesh,mua,mus,kappa,"mesh_new");
 end
 
@@ -111,9 +113,12 @@ delta = 0.0001;
 for i = 1: size(kappa,1)
 % for i = 1: 10
     fprintf("%d iteration in Jacobian started. %d th iteration\n",i,iter);
-    temp_kappa = kappa;
-    temp_kappa(i) = kappa(i) + delta;
-    temp_mus = (1./(3.*temp_kappa))-mua;
+%     temp_kappa = kappa;
+%     temp_kappa(i) = kappa(i) + delta;
+%     temp_mus = (1./(3.*temp_kappa))-mua;
+    temp_mus = mus;
+    temp_mus(i) = mus(i) + delta;
+    temp_kappa = find_kappa(mua,temp_mus);
     mesh_jacobian = new_mesh(mesh_new,mua,temp_mus, temp_kappa,"mesh_jacobian");
     
     
