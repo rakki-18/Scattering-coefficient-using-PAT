@@ -2,8 +2,8 @@
 function mua_mus_reconstruction(H,mua,mus,Mesh)
 
 %hyper parameters
-max_iterations = 8;
-regularisation_parameter = 0.1;
+max_iterations = 5;
+regularisation_parameter = 2;
 
 
 nodes = size(H,1)/size(Mesh.wv,1);
@@ -19,7 +19,8 @@ error_list_mus = [];
 for i = 1:max_iterations
     fprintf("%d iterations started\n",i);
     fluence_new = new_femdata_spectral(mesh_new,0);
-    
+    % Reducing the regularisation parameter by half in each iteration
+    regularisation_parameter = regularisation_parameter/2;
     % Find error in calculation
     error_H = sum((fluence_new.phi.*mua - H).*(fluence_new.phi.*mua - H),1);
     error_list = [error_list [error_H;sum(abs(Mesh.mua - mua),1);sum(abs(Mesh.mus - mus),1)]];
@@ -27,18 +28,20 @@ for i = 1:max_iterations
     error_mus = abs(Mesh.mus - mus);
     error_list_mua = [error_list_mua error_mua];
     error_list_mus = [error_list_mus error_mus];
+    G = find_jacobian(mua,mus,kappa,mesh_new,fluence_new,i);
+%     G_mua = find_jacobian_mua(mua,mus,kappa,mesh_new,fluence_new,i);
     
-    G_mua = find_jacobian_mua(mua,mus,kappa,mesh_new,fluence_new,i);
+    delta_t = find_delta_t(G,regularisation_parameter,H, fluence_new.phi.*mua);
     
-    delta_t = find_delta_t(G_mua,regularisation_parameter,H, fluence_new.phi.*mua);
-    [mua,mus,kappa,mesh_new] = update_mua(delta_t, mua,mus,kappa,Mesh);
+%     [mua,mus,kappa,mesh_new] = update_mua(delta_t, mua,mus,kappa,Mesh);
+    [mua,mus,kappa,mesh_new] = update(delta_t, mua,mus,kappa,Mesh);
 
     % Updating Mus and kappa values now.
-    fluence_new = new_femdata_spectral(mesh_new,0);
-    G_kappa = find_jacobian_kappa(mua,mus,kappa,mesh_new,fluence_new,i);
-    delta_t = find_delta_t(G_kappa,regularisation_parameter,H, fluence_new.phi.*mua);
-    [mua,mus,kappa,mesh_new] = update_mus(delta_t, mua,mus,kappa,Mesh);
-    clear delta_t G_kappa G_mus fluence_new;
+%     fluence_new = new_femdata_spectral(mesh_new,0);
+%     G_kappa = find_jacobian_kappa(mua,mus,kappa,mesh_new,fluence_new,i);
+%     delta_t = find_delta_t(G_kappa,regularisation_parameter,H, fluence_new.phi.*mua);
+%     [mua,mus,kappa,mesh_new] = update_mus(delta_t, mua,mus,kappa,Mesh);
+%     clear delta_t G_kappa G_mus fluence_new;
     save('variables','error_list','error_list_mua','error_list_mus','-append');
     %% PLOTTING RESULTS for first wavelength
     figure;

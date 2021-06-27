@@ -1,4 +1,4 @@
-meshName = 'crosstalk2';
+meshName = 'crosstalk';
 
 % Erasing the contents of the log file and variables workspace
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
