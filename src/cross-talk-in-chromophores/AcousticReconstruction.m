@@ -49,8 +49,8 @@ input_args = {'PMLInside', false, 'PMLSize', PML_size, 'Smooth', false, 'PlotPML
 % run the simulation
 sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
 % add noise to the recorded sensor data
-signal_to_noise_ratio = 40;                 % [dB]
-sensor_data = addNoise(sensor_data, signal_to_noise_ratio, 'peak');
+% signal_to_noise_ratio = 40;                 % [dB]
+% sensor_data = addNoise(sensor_data, signal_to_noise_ratio, 'peak');
 
 % reset the initial pressure
 source.p0 = 0;
