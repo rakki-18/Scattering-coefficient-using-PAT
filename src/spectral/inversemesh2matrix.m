@@ -12,8 +12,8 @@ node_dist = (max(node(:,1)) - offset)/(length - 1);
 H_partial = zeros(size(node,1),1);
 
 for i = 1:size(node,1)
-    x = (node(i,1) - offset)/node_dist;  % finding X-coordinate
-    y = (node(i,2) - offset)/node_dist;  % finding Y-coordinate
+    x = floor((node(i,1) - offset)/node_dist); % finding X-coordinate
+    y = floor((node(i,2) - offset)/node_dist); % finding Y-coordinate
     average = 0;
     for j = x*4 + 1: (x+1)*4
         for k = y*4 + 1: (y+1)*4

@@ -11,8 +11,8 @@ node_dist = (max(node(:,1)) - offset)/(length - 1);
 image = zeros(4*length,4*length);
 
 for i = 1:size(H,1)
-    x = (node(i,1) - offset)/node_dist; % finding X-coordinate
-    y = (node(i,2) - offset)/node_dist; % finding Y-coordinate
+    x = floor((node(i,1) - offset)/node_dist); % finding X-coordinate
+    y = floor((node(i,2) - offset)/node_dist); % finding Y-coordinate
     for j = x*4+1 : (x+1)*4
         for k = y*4+1 : (y+1)*4
             image(j,k) = 100*H(i);     %scaling up the values by a factor of 100.

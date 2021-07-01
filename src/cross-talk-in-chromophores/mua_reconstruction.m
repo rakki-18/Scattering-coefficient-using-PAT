@@ -33,7 +33,7 @@ for i = 1:max_iterations
     error_mua = abs(Mesh.mua - mua);
     error_list_mua = [error_list_mua error_mua];
 
-    save('variables','error_list','error_list_mua','-append');
+    save('variables','error_list','error_list_mua','G','-append');
 
     %% PLOTTING RESULTS for first wavelength
     figure;

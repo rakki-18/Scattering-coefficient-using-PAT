@@ -30,10 +30,10 @@ for i = 1: size(Mesh.wv)
     % Load the reconstructed H for the particular wavelength
     load('variables.mat','H_partial');
 %     % Plot the reconstructed energy distribution
-%     figure;
-%     plotim(Mesh,H_partial);
-%     title('Reconstructed Energy distribution','FontSize',10);
-%     colorbar('horiz');
+    figure;
+    plotim(Mesh,H_partial);
+    title('Reconstructed Energy distribution','FontSize',10);
+    colorbar('horiz');
     H_recon = [H_recon; H_partial];
 end
 
@@ -48,7 +48,7 @@ end
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector
-mua = mua_reconstruction(H_recon,mua,mus,Mesh);
+mua = mua_reconstruction(H,mua,mus,Mesh);
 
 % Resize mua matrix
 mua = resize_matrix(mua,Nodes,size(Mesh.wv,1));

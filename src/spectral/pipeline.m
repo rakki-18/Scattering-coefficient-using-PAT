@@ -1,4 +1,4 @@
-meshName = 'crosstalk';
+meshName = 'crosstalk2';
 
 % Erasing the contents of the log file and variables workspace
 fid = fopen(fullfile('', 'conditionMatrix.log'), 'w');
@@ -30,10 +30,10 @@ for i = 1: size(Mesh.wv)
     % Load the reconstructed H for the particular wavelength
     load('variables.mat','H_partial');
 %     % Plot the reconstructed energy distribution
-%     figure;
-%     plotim(Mesh,H_partial);
-%     title('Reconstructed Energy distribution','FontSize',10);
-%     colorbar('horiz');
+    figure;
+    plotim(Mesh,H_partial);
+    title('Reconstructed Energy distribution','FontSize',10);
+    colorbar('horiz');
     H_recon = [H_recon; H_partial];
 end
 
@@ -44,9 +44,9 @@ end
 % This would be calculated using the known concentrations of chromophores
 % of the background and the known scattering power and scattering amplitude
 % of the background.
-[mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
-save('variables.mat','mua','mus','-append');
-
-% Reconstruct the values of mua and mus from the reconstructed energy
-% distribution vector
-mua_mus_reconstruction(H_recon,mua,mus,Mesh);
+% [mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
+% save('variables.mat','mua','mus','-append');
+% 
+% % Reconstruct the values of mua and mus from the reconstructed energy
+% % distribution vector
+% mua_mus_reconstruction(H_recon,mua,mus,Mesh);

@@ -7,7 +7,7 @@ conc = Mesh.excoef\mua;
 
 conc = conc';
 
-disp("about to display the plottings of HbO and deoxyHbO");
+
 % Plotting the concentrations of HbO and deoxyHbO
 figure;
 plotim(Mesh,conc(:,1));
