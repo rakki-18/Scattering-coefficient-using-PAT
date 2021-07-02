@@ -44,16 +44,19 @@ end
 % This would be calculated using the known concentrations of chromophores
 % of the background and the known scattering power and scattering amplitude
 % of the background.
-[mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
+% [mua, mus] = calc_initial_value([0.01, 0.01,0.4],[1,1],Mesh);
+conc = calc_initial_value_conc([0.01,0.01,0.4],Mesh);
 
 % Reconstruct the values of mua and mus from the reconstructed energy
 % distribution vector
-mua = mua_reconstruction(H,mua,mus,Mesh);
+% mua = mua_reconstruction(H,mua,mus,Mesh);
+conc = conc_reconstruction(H_recon,conc,Mesh);
+save('variables','conc','-append');
 
 % Resize mua matrix
-mua = resize_matrix(mua,Nodes,size(Mesh.wv,1));
-save('variables.mat','mua','mus','-append');
-
-% Find concentration of chromophores using spectral decomposition
-conc = spectral_decomposition(mua,Mesh);
-save('variables.mat','conc','-append');
+% mua = resize_matrix(mua,Nodes,size(Mesh.wv,1));
+% save('variables.mat','mua','mus','-append');
+% 
+% % Find concentration of chromophores using spectral decomposition
+% conc = spectral_decomposition(mua,Mesh);
+% save('variables.mat','conc','-append');
